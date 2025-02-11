@@ -21,3 +21,12 @@ class Device(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Reviews(models.Model):
+    comments =models.TextField(max_length=250)
+    devices = models.ForeignKey(Device, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
