@@ -29,4 +29,10 @@ def device_index(request):
 class DeviceCreate(CreateView):
     model = Device
     fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
+<<<<<<< HEAD
+def cat_detail(request, cat_id):
+    cat = Cat.objects.get(id=cat_id)
+    return render(request, 'cats/detail.html', {'cat': cat})
+=======
 >>>>>>> e43404fecd832bc18483013fbf0557ff035d7e48
+>>>>>>> 5a1bef1e38a30f7e8ea1110e8cebf7f24cce2629
