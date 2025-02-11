@@ -6,5 +6,5 @@ urlpatterns = [
     path('about/', views.about, name='about'),
 
     path('device/create/', views.DeviceCreate.as_view(), name='device-create'),
-    path('device/<int:device_id>/', views.device_detail, name='device-detail'),
+    path('devices/<int:device_id>/', views.device_detail, name='device-detail'),
 ]
