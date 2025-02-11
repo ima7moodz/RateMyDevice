@@ -1,0 +1,21 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block head %}
+
+{% endblock %} 
+{% block content %}
+<section class="device-container">
+  <div class="device-img">
+
+  </div>
+  <div class="device-details">
+    <h1>{{ device.name }}</h1>
+    <p>{{ device.category }}</p>
+    <p>{{ device.rate }}</p>
+    <p>{{ device.warrenty_expration_Date }}</p>
+    <p>{{ cat.opinion }}</p>
+    <p>{{ cat.likes }}</p>
+    <p>{{ device.description }}</p>
+  </div>
+</section>
+{% endblock %}

@@ -14,3 +14,6 @@ def about(request):
 class DeviceCreate(CreateView):
     model = Device
     fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
+def cat_detail(request, cat_id):
+    cat = Cat.objects.get(id=cat_id)
+    return render(request, 'cats/detail.html', {'cat': cat})
