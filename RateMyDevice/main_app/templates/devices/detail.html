@@ -16,6 +16,10 @@
     <p>{{ device.opinion }}</p>
     <p>{{ device.likes }}</p>
     <p>{{ device.description }}</p>
+    <div class="device-actions">
+      <a href="{% url 'device-update' device.id %}" class="btn warn">Edit</a>
+      <a href="{% url 'device-delete' device.id %}" class="btn danger">Delete</a>
+    </div>
   </div>
 </section>
 {% endblock %}
