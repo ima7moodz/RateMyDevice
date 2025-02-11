@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block head %}
+{% endblock %} 
+{% block content %}
+
+<section>
+  <h1>Discover All Devices</h1>
+</section>
+
+<section>
+  {% for device in devices %}
+    <div>
+      <div>
+        <h2 >{{ device.name }}</h2>
+        
+      </div>
+    </div>
+  {% endfor %}
+</section>
+
+{% endblock %}

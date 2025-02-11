@@ -11,10 +11,21 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+
+def device_index(request):
+    devices = Device.objects.all()
+
+    return render(request, 'devices/index.html', {'devices': devices})
+
+
+class DeviceCreate(CreateView):
+    model = Device
+    fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
 class DeviceCreate(CreateView):
     model = Device
     fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
 
 def device_detail(request, device_id):
     device = Device.objects.get(id=device_id)
+
     return render(request, 'devices/detail.html', {'device': device})
