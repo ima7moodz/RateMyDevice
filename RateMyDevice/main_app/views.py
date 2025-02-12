@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Device
 from django.views.generic import CreateView, UpdateView,DeleteView
@@ -37,10 +37,11 @@ class DeviceDelete(DeleteView):
     model = Device
     success_url = '/devices/'
 
-
-
-
-
+def device_like(request, pk):
+    device = get_object_or_404(Device, id=pk)
+    device.likes += 1 
+    device.save()
+    return redirect('device-detail', device_id=pk)
 
 
 
