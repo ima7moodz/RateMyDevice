@@ -16,6 +16,14 @@
     <p>{{ device.opinion }}</p>
     <p>{{ device.likes }}</p>
     <p>{{ device.description }}</p>
+    <div class="device-actions">
+      <a href="{% url 'device-update' device.id %}" class="btn warn">Edit</a>
+      <a href="{% url 'device-delete' device.id %}" class="btn danger">Delete</a>
+      <form action="{% url 'device-like' device.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn success">Like ({{ device.likes }})</button>
+      </form>
+    </div>
   </div>
 </section>
 

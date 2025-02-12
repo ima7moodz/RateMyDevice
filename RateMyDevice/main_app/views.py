@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Device
 from django.views.generic import CreateView, UpdateView,DeleteView
@@ -7,7 +7,7 @@ from .forms import ReviewForm
 # Define the home view function
 def home(request):
     devices = Device.objects.all()
-
+    
     return render(request, 'devices/index.html', {'devices': devices})
 
 
@@ -47,3 +47,22 @@ def add_review(request, device_id):
         new_review.user_id =1
         new_review.save()
     return redirect('device-detail', device_id=device_id)
+    return render(request, 'devices/detail.html', {'device': device})
+
+class DeviceUpdate(UpdateView):
+    model = Device
+    fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
+
+class DeviceDelete(DeleteView):
+    model = Device
+    success_url = '/devices/'
+
+def device_like(request, pk):
+    device = get_object_or_404(Device, id=pk)
+    device.likes += 1 
+    device.save()
+    return redirect('device-detail', device_id=pk)
+
+
+
+
