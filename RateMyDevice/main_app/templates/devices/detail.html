@@ -18,4 +18,42 @@
     <p>{{ device.description }}</p>
   </div>
 </section>
+
+<div>
+  <section>
+    <div>
+      <h2>Comments</h2>
+    </div>
+
+    <h3>Add a Comment</h3>
+<form action="{% url 'add-review' device.id %}" method="post" autocomplete="off">
+  {% csrf_token %} 
+  {{ review_form.as_p }}
+  <button type="submit" class="btn submit">Add Comment</button>
+</form>
+
+<h3>All Comments</h3>
+    {% if reviews %}
+      <table>
+        <thead>
+          <tr>
+            <th>Comments</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for review in reviews %}
+          <tr>
+            <td>{{ review.comments }}</td>
+            <td>{{ review.user.username }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div>
+        <p>⚠️ No Comments on this Device yet: {{ device.name }} </p>
+      </div>
+    {% endif %}
+  </section>
 {% endblock %}

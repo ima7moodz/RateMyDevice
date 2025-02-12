@@ -1,11 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Device
 from django.views.generic import CreateView, UpdateView,DeleteView
 from django.views.generic import ListView, DetailView
+from .forms import ReviewForm
 # Define the home view function
 def home(request):
-    return HttpResponse('<h1>Hello to Rate My Device Website</h1>')
+    devices = Device.objects.all()
+
+    return render(request, 'devices/index.html', {'devices': devices})
 
 
 def about(request):
@@ -21,11 +24,26 @@ def device_index(request):
 class DeviceCreate(CreateView):
     model = Device
     fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
-class DeviceCreate(CreateView):
-    model = Device
-    fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
 
 def device_detail(request, device_id):
     device = Device.objects.get(id=device_id)
+    reviews = device.reviews_set.all()
+    review_form = ReviewForm()
 
-    return render(request, 'devices/detail.html', {'device': device})
+    return render(request, 'devices/detail.html', {'device': device, 
+                                                'review_form': review_form,
+                                                'reviews': reviews})
+
+
+
+# review
+def add_review(request, device_id):
+    form = ReviewForm(request.POST)
+
+    if form.is_valid():
+        print(device_id)
+        new_review = form.save(commit=False)
+        new_review.devices_id = device_id
+        new_review.user_id =1
+        new_review.save()
+    return redirect('device-detail', device_id=device_id)

@@ -8,4 +8,8 @@ urlpatterns = [
 
     path('device/create/', views.DeviceCreate.as_view(), name='device-create'),
     path('devices/<int:device_id>/', views.device_detail, name='device-detail'),
+
+
+    # Path for adding review
+    path('devices/<int:device_id>/add-review', views.add_review, name='add-review')
 ]
