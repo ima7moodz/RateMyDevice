@@ -12,8 +12,9 @@
   {% for device in devices %}
     <div>
       <div>
+        <a href= {%  url "device-detail" device.id %}>
         <h2 >{{ device.name }}</h2>
-        
+        </a>
       </div>
     </div>
   {% endfor %}
