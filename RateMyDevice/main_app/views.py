@@ -4,11 +4,15 @@ from .models import Device
 from django.views.generic import CreateView, UpdateView,DeleteView
 from django.views.generic import ListView, DetailView
 from .forms import ReviewForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import login
+
 # Define the home view function
-def home(request):
-    devices = Device.objects.all()
-    
-    return render(request, 'devices/index.html', {'devices': devices})
+class Home(LoginView):
+    template_name = 'index.html'
 
 
 def about(request):
@@ -66,3 +70,17 @@ def device_like(request, pk):
 
 
 
+def signup(request):
+    error_message = ''
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('device-ind')
+        else:
+            error_message = 'Invalid signup - Please try again later.'
+
+    form = UserCreationForm()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'signup.html', context)

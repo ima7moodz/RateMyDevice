@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from . import views 
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', views.Home.as_view(), name='home'),
     path('devices', views.device_index, name='device-ind'),
     path('about/', views.about, name='about'),
 
@@ -16,4 +17,10 @@ urlpatterns = [
     path('devices/<int:pk>/update/', views.DeviceUpdate.as_view(), name='device-update'),
     path('devices/<int:pk>/delete/', views.DeviceDelete.as_view(), name='device-delete'),
     path('device/<int:pk>/like/', views.device_like, name='device-like'),
+
+    # Signup URL
+    path('accounts/signup/', views.signup, name='signup'),
+
+    # Logout
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
