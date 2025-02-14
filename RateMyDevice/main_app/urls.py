@@ -23,4 +23,9 @@ urlpatterns = [
 
     # Logout
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+    # Chat
+    path('chat/start/<int:user_id>/', views.start_chat, name='start-chat'),
+    path('chat/<int:chat_id>/', views.chat_room, name='chat-room'),
+
 ]

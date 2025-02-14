@@ -55,7 +55,7 @@ ROOT_URLCONF = 'RateMyDevice.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ratemydevice',
         'USER': 'postgres', 
-        'PASSWORD': 'M12153235m',
+        'PASSWORD': 'Nawra2002',
     }
 }
 
