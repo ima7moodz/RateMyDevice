@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 # Create your models here.
 CATEGORY = (
     ('P', 'Smart Phone'),
@@ -22,6 +23,9 @@ class Device(models.Model):
     def __str__(self):
         return self.name
     
+    def get_absolute_url(self):
+        return reverse('device-detail', kwargs={'device_id': self.id})  
+    
 
 class Reviews(models.Model):
     comments =models.TextField(max_length=250)
@@ -32,3 +36,20 @@ class Reviews(models.Model):
         return f"{self.cat} on {self.comments}"
     class Meta:
         ordering = ['-id']
+
+class Chat(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_chats")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_chats")
+    date_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Chat between {self.sender.username} and {self.receiver.username}"
+    
+class Message(models.Model):
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content}"
