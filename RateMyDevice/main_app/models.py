@@ -36,7 +36,7 @@ class Reviews(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.cat} on {self.comments}"
+        return f"{self.user.username} on {self.comments}"
     class Meta:
         ordering = ['-id']
 
