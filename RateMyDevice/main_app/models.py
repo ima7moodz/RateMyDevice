@@ -12,20 +12,23 @@ CATEGORY = (
 
 class Device(models.Model):
     name = models.CharField(max_length=100)
-    category=models.CharField(max_length=1, choices=CATEGORY, default=[0][0])
+    category = models.CharField(max_length=1, choices=CATEGORY, default=[0][0])
     description = models.TextField(max_length=250)
     rate = models.DecimalField(max_digits=8, decimal_places=0, default=0)
-    warrenty_expration_Date =models.DateField()
+    warrenty_expration_Date = models.DateField()
     opinion = models.TextField(max_length=250)
-    likes =models.IntegerField(default=0)
-    owner=models.ForeignKey(User, on_delete=models.CASCADE)
+    likes = models.ManyToManyField(User, related_name='liked_devices', blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
-        return reverse('device-detail', kwargs={'device_id': self.id})  
-    
+        return reverse('device-detail', kwargs={'device_id': self.id})
+
+    def total_likes(self):
+        return self.likes.count()
+
 
 class Reviews(models.Model):
     comments =models.TextField(max_length=250)

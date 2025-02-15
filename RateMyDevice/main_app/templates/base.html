@@ -14,7 +14,7 @@
       <nav>
         <ul>
           {% if user.is_authenticated %}
-          <li><a href="/">Home</a></li>
+          <li><a href="/devices">Home</a></li>
           <li><a href="{% url 'device-create' %}">Add a Device</a></li>
           <li><a href="/about">About</a></li>
           <li>
