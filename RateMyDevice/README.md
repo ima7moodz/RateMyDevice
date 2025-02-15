@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/6367014/how-to-send-email-via-django

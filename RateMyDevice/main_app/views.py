@@ -73,10 +73,15 @@ class DeviceDelete(DeleteView):
     model = Device
     success_url = '/devices/'
 
+@login_required
 def device_like(request, pk):
     device = get_object_or_404(Device, id=pk)
-    device.likes += 1 
-    device.save()
+
+    if request.user in device.likes.all():
+        device.likes.remove(request.user)  
+    else:
+        device.likes.add(request.user)  
+
     return redirect('device-detail', device_id=pk)
 
 

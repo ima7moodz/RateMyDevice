@@ -26,8 +26,16 @@
       <a href="{% url 'device-delete' device.id %}" class="btn danger">Delete</a>
       <form action="{% url 'device-like' device.id %}" method="POST">
         {% csrf_token %}
-        <button type="submit" class="btn success">Like ({{ device.likes }})</button>
-      </form>
+        {% if user.is_authenticated %}
+            {% if user in device.likes.all %}
+                <button type="submit" class="btn danger">Unlike ({{ device.total_likes }})</button>
+            {% else %}
+                <button type="submit" class="btn success">Like ({{ device.total_likes }})</button>
+            {% endif %}
+        {% else %}
+            <p><a href="{% url 'login' %}">Login to like</a></p>
+        {% endif %}
+    </form>
     </div>
   </div>
 </section>
