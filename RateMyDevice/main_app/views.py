@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .models import Device , User, Chat, Message
+from .models import Device , User, Chat, Message, Reviews
 from django.views.generic import CreateView, UpdateView,DeleteView
 from django.views.generic import ListView, DetailView
 from .forms import ReviewForm , DeviceUserCreationForm
@@ -121,3 +121,16 @@ def chat_room(request, chat_id):
     
     messages = chat.messages.all().order_by("timestamp")
     return render(request, 'chats/chat_room.html', {'chat': chat, 'messages': messages})
+
+@login_required
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username) 
+    devices = Device.objects.filter(owner=user)
+    chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user) 
+
+    context = {
+        'profile_user': user,
+        'devices': devices,
+        'chats': chats
+    }
+    return render(request, 'user/profile.html', context)
