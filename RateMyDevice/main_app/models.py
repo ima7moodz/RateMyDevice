@@ -19,6 +19,7 @@ class Device(models.Model):
     opinion = models.TextField(max_length=250)
     likes = models.ManyToManyField(User, related_name='liked_devices', blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='device_images/', blank=True, null=True)
 
     def __str__(self):
         return self.name

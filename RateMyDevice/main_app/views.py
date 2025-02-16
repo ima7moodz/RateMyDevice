@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .models import Device , User, Chat, Message, Reviews
 from django.views.generic import CreateView, UpdateView,DeleteView
 from django.views.generic import ListView, DetailView
-from .forms import ReviewForm , DeviceUserCreationForm
+from .forms import ReviewForm , DeviceUserCreationForm, DeviceForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -27,11 +27,15 @@ def device_index(request):
 
 class DeviceCreate(LoginRequiredMixin, CreateView):
     model = Device
-    fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
+    form_class = DeviceForm
 
     def form_valid(self, form):
         form.instance.owner = self.request.user  
         return super().form_valid(form)
+
+class DeviceUpdate(UpdateView):
+    model = Device
+    form_class = DeviceForm
 
 def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
@@ -65,9 +69,6 @@ def add_review(request, device_id):
     return redirect('device-detail', device_id=device_id)
     
 
-class DeviceUpdate(UpdateView):
-    model = Device
-    fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion']
 
 class DeviceDelete(DeleteView):
     model = Device
