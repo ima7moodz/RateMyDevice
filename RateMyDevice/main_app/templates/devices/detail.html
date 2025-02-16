@@ -6,16 +6,20 @@
 {% block content %}
 <section class="device-container">
   <div class="device-img">
-
+    {% if device.image %}
+      <img src="{{ device.image.url }}" alt="{{ device.name }}" style="width: 300px; height: auto;">
+    {% else %}
+      <p>No image available</p>
+    {% endif %}
   </div>
   <div class="device-details">
     <h1>{{ device.name }}</h1>
     <p>{{ device.category }}</p>
+    <p>{{ device.description }}</p>
     <p>{{ device.rate }}</p>
     <p>{{ device.warrenty_expration_Date }}</p>
+    <p>Owner Opinion</p>
     <p>{{ device.opinion }}</p>
-    <p>{{ device.likes }}</p>
-    <p>{{ device.description }}</p>
     <div class="device-actions">
       {% if owner_id %}
       <a href="{% url 'start-chat' owner_id %}">Chat with Owner</a>
