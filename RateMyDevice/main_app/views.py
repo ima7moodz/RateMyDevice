@@ -110,13 +110,17 @@ def signup(request):
 @login_required
 def start_chat(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
-    chat, created = Chat.objects.get_or_create(sender=request.user, receiver=receiver)
+    senders = get_object_or_404(User, id=user_id)
+    if senders == receiver and receiver == senders:
+        print("error")
+    else:
+        chat, created = Chat.objects.get_or_create(sender=request.user, receiver=receiver)
     return redirect('chat-room', chat_id=chat.id)
 
 
 @login_required
 def chat_room(request, chat_id):
-    chat = get_object_or_404(Chat, sender_id=request.user)
+    chat = get_object_or_404(Chat, id=chat_id)
     
     if request.method == "POST":
         message_content = request.POST.get('message')
