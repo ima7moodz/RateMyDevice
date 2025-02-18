@@ -1,26 +1,49 @@
-{% extends 'base.html' %} 
-{% load static %} 
+{% extends 'base.html' %}
+{% load static %}
 {% block head %}
 {% load bootstrap5 %}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
-{% endblock %} 
+{% endblock %}
 {% block content %}
 
-<section>
+<section class="py-5 bg-light text-center">
   <h1>Discover All Devices</h1>
 </section>
 
-<section>
-  {% for device in devices %}
-    <div class="container">
-      <div>
-        <a href= {%  url "device-detail" device.id %}>
-        <h2 >{{ device.name }}</h2>
-        </a>
+<section class="container mt-4">
+  <div class="row">
+    {% for device in devices %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card shadow-sm" style="height: 100%; max-width: 250px; padding: 0;">
+          <a href="{% url 'device-detail' device.id %}" style="text-decoration: none;">
+            {% if device.image %}
+              <img src="{{ device.image.url }}" class="img-thumbnail" alt="{{ device.name }}" style="height: 180px; width: 100%; object-fit: contain;">
+            {% else %}
+              <img src="{% static 'images/default_device.jpg' %}" class="img-thumbnail" alt="Device image" style="height: 180px; width: 100%; object-fit: contain;">
+            {% endif %}
+            <div class="card-body p-4">
+              <h5 class="card-title mb-3" style="font-size: 1.2rem; font-weight: 600; color: #333;">
+                {{ device.name }}
+              </h5>
+              
+              <div class="mb-3">
+                <p class="card-text" style="font-size: 0.95rem; font-weight: 500; color: #6c757d;">
+                  <strong>Category:</strong> {{ device.get_category_display }}
+                </p>
+              </div>
+              
+              <div>
+                <p class="card-text" style="font-size: 0.95rem; font-weight: 500; color: #6c757d;">
+                  <strong>Rating:</strong> {{ device.rate }}  / 5
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 </section>
 
 {% endblock %}

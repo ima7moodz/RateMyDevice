@@ -1,47 +1,54 @@
+{% load static %}
+{% load bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="image/png" href="" />
-    <title>Rate My Device</title>
-    {% block head %} 
-    {% load bootstrap5 %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Rate My Device{% endblock %}</title>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    {% endblock %}
-  </head>
-  <body>
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link link-light" href="/devices">Home</a></li>
-          <li class="nav-item"><a class="nav-link link-light" href="{% url 'device-create' %}">Add a Device</a></li>
-          <li class="nav-item"><a class="nav-link link-light" href="/about">About</a></li>
-          <li class="nav-item"><a class="nav-link link-light" href="{% url 'profile' request.user.username %}">My Activity</a></li>
-          <li class="nav-item">
-            <form class="btn btn-outline-success" method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button class="btn btn-outline-success" type="submit">Log out</button>
-            </form>
-          </li>
-          {% else %}
-          <li class="nav-item"><a class="nav-link link-light" href="{% url 'about' %}">About</a></li>
-          <li class="nav-item"><a class="nav-link link-light" href="{% url 'home' %}">Login</a></li>
-          <li class="nav-item"><a class="nav-link link-light" href="{% url 'signup' %}">Sign Up</a></li>
-          {% endif %}
-        </ul>
-      </div>
-      </nav>
-    </header>
-    <main>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
 
-      <h1> Welcome to RateMyDevice<h1/>
-    {% block content %} 
-    {% endblock %}
-    </main>
-  </body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'device-ind' %}">RateMyDevice</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'device-create' %}">Add a Device</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'profile' user.username %}">My Activity</a></li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Log out</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container mt-4">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="text-center mt-4 py-3 bg-light">
+    <p>&copy; 2025 RateMyDevice. All rights reserved.</p>
+</footer>
+
+</body>
 </html>
