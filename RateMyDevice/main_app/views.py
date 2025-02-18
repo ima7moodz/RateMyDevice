@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
-from django.db.models import Q
+
 
 
 # Define the home view function
@@ -150,4 +150,3 @@ def profile_view(request, username):
     }
     
     return render(request, 'user/profile.html', context)
-
