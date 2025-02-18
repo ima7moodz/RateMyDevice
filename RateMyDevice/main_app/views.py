@@ -9,6 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
+from django.db.models import Q
+
 
 # Define the home view function
 class Home(LoginView):
@@ -114,7 +116,7 @@ def start_chat(request, user_id):
 
 @login_required
 def chat_room(request, chat_id):
-    chat = get_object_or_404(Chat, id=chat_id)
+    chat = get_object_or_404(Chat, sender_id=request.user)
     
     if request.method == "POST":
         message_content = request.POST.get('message')
@@ -124,15 +126,28 @@ def chat_room(request, chat_id):
     messages = chat.messages.all().order_by("timestamp")
     return render(request, 'chats/chat_room.html', {'chat': chat, 'messages': messages})
 
+
 @login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username) 
     devices = Device.objects.filter(owner=user)
-    chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user) 
+    chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
+    unique_chats = []
+    for chat in chats:
+        chat_pair = tuple(sorted([chat.sender.id, chat.receiver.id]))  
+        if chat_pair not in unique_chats:
+            unique_chats.append(chat_pair)
+    chat_details = []
+    for chat_pair in unique_chats:
+        sender_user = User.objects.get(id=chat_pair[0])
+        receiver_user = User.objects.get(id=chat_pair[1])
+        chat_details.append((sender_user, receiver_user))
 
     context = {
         'profile_user': user,
         'devices': devices,
-        'chats': chats
+        'chats': chat_details  
     }
+    
     return render(request, 'user/profile.html', context)
+
