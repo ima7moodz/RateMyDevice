@@ -30,6 +30,7 @@ class DeviceCreate(LoginRequiredMixin, CreateView):
     form_class = DeviceForm
 
     def form_valid(self, form):
+        print("form", form)
         form.instance.owner = self.request.user  
         return super().form_valid(form)
 
