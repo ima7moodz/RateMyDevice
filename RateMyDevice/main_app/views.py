@@ -154,4 +154,3 @@ def profile_view(request, username):
     }
     
     return render(request, 'user/profile.html', context)
-
