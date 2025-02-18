@@ -1,7 +1,9 @@
 {% extends 'base.html' %} 
 {% load static %} 
 {% block head %}
-
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 {% endblock %} 
 {% block content %}
 <section class="device-container">
@@ -14,7 +16,7 @@
   </div>
   <div class="device-details">
     <h1>{{ device.name }}</h1>
-    <p>{{ device.category }}</p>
+    <p>{{ device.get_category_display }}</p>
     <p>{{ device.description }}</p>
     <p>{{ device.rate }}</p>
     <p>{{ device.warrenty_expration_Date }}</p>

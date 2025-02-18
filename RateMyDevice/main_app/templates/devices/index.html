@@ -1,6 +1,9 @@
 {% extends 'base.html' %} 
 {% load static %} 
 {% block head %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 {% endblock %} 
 {% block content %}
 
@@ -10,7 +13,7 @@
 
 <section>
   {% for device in devices %}
-    <div>
+    <div class="container">
       <div>
         <a href= {%  url "device-detail" device.id %}>
         <h2 >{{ device.name }}</h2>

@@ -21,11 +21,11 @@ class DeviceUserCreationForm(UserCreationForm):
 
 
 class DeviceForm(forms.ModelForm):
-    warranty_expiration_date = forms.DateField(
+    warrenty_expration_Date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}) 
     )
 
     class Meta:
         model = Device
-        fields = ['name', 'category', 'description', 'rate', 'warranty_expiration_date', 'opinion', 'image']
+        fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion', 'image']
 

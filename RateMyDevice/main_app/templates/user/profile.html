@@ -7,7 +7,7 @@
 <h2>Devices Owned</h2>
 <ul>
     {% for device in devices %}
-        <li><a href="{% url 'device-detail' device.id %}">{{ device.name }}</a> -{{ device.category }}</li>
+        <li><a href="{% url 'device-detail' device.id %}">{{ device.name }}</a> -{{ device.get_category_display }}</li>
     {% empty %}
         <li>No devices added.</li>
     {% endfor %}

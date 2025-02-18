@@ -12,7 +12,7 @@ CATEGORY = (
 
 class Device(models.Model):
     name = models.CharField(max_length=100)
-    category = models.CharField(max_length=1, choices=CATEGORY, default=[0][0])
+    category = models.TextField(max_length=1, choices=CATEGORY, default=CATEGORY[0][0])
     description = models.TextField(max_length=250)
     rate = models.DecimalField(max_digits=8, decimal_places=0, default=0)
     warrenty_expration_Date = models.DateField()

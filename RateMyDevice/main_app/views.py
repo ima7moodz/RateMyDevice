@@ -41,7 +41,7 @@ def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     reviews = device.reviews_set.all()
     review_form = ReviewForm()
-
+    print(device.category)
     context = {
         'device': device,
         'review_form': review_form,
