@@ -1,9 +1,3 @@
-{% extends 'base.html' %} 
-{% load static %} 
-{% block head %}
-
-{% endblock %} 
-{% block content %}
 <section class="device-container">
   <div class="device-img">
     {% if device.image %}
@@ -14,50 +8,48 @@
   </div>
   <div class="device-details">
     <h1>{{ device.name }}</h1>
-    <p>{{ device.category }}</p>
+    <p>{{ device.get_category_display }}</p>
     <p>{{ device.description }}</p>
     <p>{{ device.rate }}</p>
     <p>{{ device.warrenty_expration_Date }}</p>
     <p>Owner Opinion</p>
     <p>{{ device.opinion }}</p>
     <div class="device-actions">
-      {% if owner_id %}
-      <a href="{% url 'start-chat' owner_id %}">Chat with Owner</a>
-  {% else %}
-      <p>Owner not available for chat</p>
-  {% endif %}  
-      <a href="{% url 'device-update' device.id %}" class="btn warn">Edit</a>
-      <a href="{% url 'device-delete' device.id %}" class="btn danger">Delete</a>
+      {% if user.is_authenticated and user.id != owner_id %}
+        <a href="{% url 'start-chat' owner_id %}" class="btn primary">Chat with Owner</a>
+      {% endif %}
+      {% if user.is_authenticated and user.id == owner_id %}
+        <a href="{% url 'device-update' device.id %}" class="btn warn">Edit</a>
+        <a href="{% url 'device-delete' device.id %}" class="btn danger">Delete</a>
+      {% endif %}
+    
       <form action="{% url 'device-like' device.id %}" method="POST">
         {% csrf_token %}
         {% if user.is_authenticated %}
-            {% if user in device.likes.all %}
-                <button type="submit" class="btn danger">Unlike ({{ device.total_likes }})</button>
-            {% else %}
-                <button type="submit" class="btn success">Like ({{ device.total_likes }})</button>
-            {% endif %}
+          {% if user in device.likes.all %}
+            <button type="submit" class="btn danger">Unlike ({{ device.total_likes }})</button>
+          {% else %}
+            <button type="submit" class="btn success">Like ({{ device.total_likes }})</button>
+          {% endif %}
         {% else %}
-            <p><a href="{% url 'login' %}">Login to like</a></p>
+          <p><a href="{% url 'login' %}">Login to like</a></p>
         {% endif %}
-    </form>
+      </form>
     </div>
   </div>
 </section>
-
 <div>
   <section>
     <div>
       <h2>Comments</h2>
     </div>
-
     <h3>Add a Comment</h3>
-<form action="{% url 'add-review' device.id %}" method="post" autocomplete="off">
-  {% csrf_token %} 
-  {{ review_form.as_p }}
-  <button type="submit" class="btn submit">Add Comment</button>
-</form>
-
-<h3>All Comments</h3>
+    <form action="{% url 'add-review' device.id %}" method="post" autocomplete="off">
+      {% csrf_token %}
+      {{ review_form.as_p }}
+      <button type="submit" class="btn submit">Add Comment</button>
+    </form>
+    <h3>All Comments</h3>
     {% if reviews %}
       <table>
         <thead>
@@ -76,9 +68,9 @@
         </tbody>
       </table>
     {% else %}
-      <div>
-        <p>⚠️ No Comments on this Device yet: {{ device.name }} </p>
-      </div>
+    <div>
+      <p>⚠️ No Comments on this Device yet: {{ device.name }} </p>
+    </div>
     {% endif %}
   </section>
-{% endblock %}
+</div>
