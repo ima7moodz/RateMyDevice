@@ -22,8 +22,9 @@ class DeviceUserCreationForm(UserCreationForm):
 
 class DeviceForm(forms.ModelForm):
     warrenty_expration_Date = forms.DateField(
-
-        widget=forms.DateInput(format="%Y-%m-%d", attrs={'type': 'date'}) 
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={'type': 'date'}))
+    rate = forms.FloatField(
+        widget=forms.NumberInput(attrs={'min': 0, 'max': 5, 'step': 0.1}) 
     )
 
     class Meta:
