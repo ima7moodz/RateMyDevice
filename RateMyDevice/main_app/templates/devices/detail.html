@@ -1,3 +1,13 @@
+
+{% extends 'base.html' %} 
+{% load static %} 
+{% block head %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% endblock %} 
+{% block content %}
+
 <section class="device-container">
   <div class="device-img">
     {% if device.image %}

@@ -22,6 +22,7 @@ class DeviceUserCreationForm(UserCreationForm):
 
 class DeviceForm(forms.ModelForm):
     warrenty_expration_Date = forms.DateField(
+
         widget=forms.DateInput(format="%Y-%m-%d", attrs={'type': 'date'}) 
     )
 
