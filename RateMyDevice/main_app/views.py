@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
-
+from django.db import models
 
 
 # Define the home view function
@@ -20,7 +20,7 @@ class Home(LoginView):
 def about(request):
     return render(request, 'about.html')
 
-
+@login_required
 def device_index(request):
     devices = Device.objects.all()
 
@@ -36,10 +36,11 @@ class DeviceCreate(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user  
         return super().form_valid(form)
 
-class DeviceUpdate(UpdateView):
+class DeviceUpdate(LoginRequiredMixin, UpdateView):
     model = Device
     form_class = DeviceForm
 
+@login_required
 def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     reviews = device.reviews_set.all()
@@ -60,6 +61,7 @@ def device_detail(request, device_id):
 
 
 # review
+@login_required
 def add_review(request, device_id):
     form = ReviewForm(request.POST)
 
@@ -73,7 +75,7 @@ def add_review(request, device_id):
     
 
 
-class DeviceDelete(DeleteView):
+class DeviceDelete(LoginRequiredMixin, DeleteView):
     model = Device
     success_url = '/devices/'
 
@@ -110,12 +112,22 @@ def signup(request):
 @login_required
 def start_chat(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
-    senders = get_object_or_404(User, id=user_id)
-    if senders == receiver and receiver == senders:
-        print("error")
+    
+    if request.user.id == user_id:
+        return redirect('profile', username=request.user.username)
+        
+    existing_chat = Chat.objects.filter(
+        (models.Q(sender=request.user) & models.Q(receiver=receiver)) |
+        (models.Q(sender=receiver) & models.Q(receiver=request.user))
+    ).first()
+    
+    if existing_chat:
+        chat = existing_chat
     else:
-        chat, created = Chat.objects.get_or_create(sender=request.user, receiver=receiver)
+        chat = Chat.objects.create(sender=request.user, receiver=receiver)
+        
     return redirect('chat-room', chat_id=chat.id)
+
 
 
 @login_required
@@ -133,24 +145,34 @@ def chat_room(request, chat_id):
 
 @login_required
 def profile_view(request, username):
-    user = get_object_or_404(User, username=username) 
+    user = get_object_or_404(User, username=username)
     devices = Device.objects.filter(owner=user)
     chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
-    unique_chats = []
-    for chat in chats:
-        chat_pair = tuple(sorted([chat.sender.id, chat.receiver.id]))  
-        if chat_pair not in unique_chats:
-            unique_chats.append(chat_pair)
+    
     chat_details = []
-    for chat_pair in unique_chats:
-        sender_user = User.objects.get(id=chat_pair[0])
-        receiver_user = User.objects.get(id=chat_pair[1])
-        chat_details.append((sender_user, receiver_user))
+    processed_pairs = set()
+    
+    for chat in chats:
+        pair_id = tuple(sorted([chat.sender.id, chat.receiver.id]))
+        
+        if pair_id not in processed_pairs:
+            other_user = chat.receiver if chat.sender == user else chat.sender
+            
+            latest_chat = Chat.objects.filter(
+                (models.Q(sender=pair_id[0]) & models.Q(receiver=pair_id[1])) |
+                (models.Q(sender=pair_id[1]) & models.Q(receiver=pair_id[0]))
+            ).latest('date_time')
+            
+            chat_details.append({
+                'chat': latest_chat,
+                'other_user': other_user
+            })
+            processed_pairs.add(pair_id)
 
     context = {
         'profile_user': user,
         'devices': devices,
-        'chats': chat_details  
+        'chats': chat_details
     }
     
     return render(request, 'user/profile.html', context)
