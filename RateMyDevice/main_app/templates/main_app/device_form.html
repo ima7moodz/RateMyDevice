@@ -5,22 +5,67 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 {% endblock %}
+
 {% block content %}
 
-<div class="page-header">
-  {% if object %}
-    <h1>Edit {{ object.name }}</h1>
-  {% else %}
-    <h1>Add a Device</h1>
-  {% endif %}
-</div>
-
-
-<form action="" method="post" enctype="multipart/form-data" class="form-container">
-
+<form action="" method="post" enctype="multipart/form-data" class="custom-form p-5 bg-white shadow rounded">
   {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Submit</button>
+  
+  <h2 class="form-title text-center mb-4">{% if object %}Edit Device{% else %}Add a Device{% endif %}</h2>
+
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="floating-label">
+        <label>Device Name</label>
+        {{ form.name }}
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+      <div class="floating-label">
+        <label>Category</label>
+        {{ form.category }}
+      </div>
+    </div>
+
+    <div class="col-md-12 mb-4">
+      <div class="floating-label">
+        <label>Description</label>
+        {{ form.description }}
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="floating-label">
+        <label>Rating / 5</label>
+        {{ form.rate }}
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="floating-label">
+        <label>Warranty Expiration Date</label>
+        {{ form.warrenty_expration_Date }}
+      </div>
+    </div>
+
+    <div class="col-md-12 mb-4">
+      <div class="floating-label">
+        <label>Owner's Opinion</label>
+        {{ form.opinion }}
+      </div>
+    </div>
+
+    <div class="col-md-12 mb-4">
+      <div class="file-upload">
+        <label>Upload Image</label>
+        {{ form.image }}
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Submit</button>
 </form>
+
 
 {% endblock %}
