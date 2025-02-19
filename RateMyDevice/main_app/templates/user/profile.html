@@ -9,7 +9,7 @@
         {% for device in devices %}
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
-                    <img src="{{ device.image.url }}" class="img-thumbnail" alt="{{ device.name }}" style="height: 180px; width: 100%; object-fit: contain;">
+                    <img src="{{ device.image.url }}" class="img-thumbnail" alt="{{ device.name }}"style="height: 180px; width: 100%; object-fit: contain;">
                     <div class="card-body">
                         <h5 class="card-title">{{ device.name }}</h5>
                         <p class="card-text">Category: {{ device.get_category_display }}</p>
@@ -26,6 +26,29 @@
             </div>
         {% endfor %}
     </div>
+
+    <h2 class="mt-4">Chats</h2>
+    <div class="row">
+        {% for chat_info in chats %}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm chat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Chat with {{ chat_info.other_user.username }}
+                        </h5>
+                        <a href="{% url 'chat-room' chat_info.chat.id %}" class="btn btn-secondary">Go to Chat</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No chats yet.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
     <!-- Chat History Section -->
     <h3 class="mt-4">Chat History</h3>

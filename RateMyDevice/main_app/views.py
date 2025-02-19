@@ -9,9 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
-from django.db.models import Q
-
-
+from django.db import models
 
 
 # Define the home view function
@@ -22,7 +20,7 @@ class Home(LoginView):
 def about(request):
     return render(request, 'about.html')
 
-
+@login_required
 def device_index(request):
     devices = Device.objects.all()
 
@@ -38,10 +36,11 @@ class DeviceCreate(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user  
         return super().form_valid(form)
 
-class DeviceUpdate(UpdateView):
+class DeviceUpdate(LoginRequiredMixin, UpdateView):
     model = Device
     form_class = DeviceForm
 
+@login_required
 def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     reviews = device.reviews_set.all()
@@ -61,6 +60,7 @@ def device_detail(request, device_id):
 
 
 # review
+@login_required
 def add_review(request, device_id):
     form = ReviewForm(request.POST)
 
@@ -74,7 +74,7 @@ def add_review(request, device_id):
     
 
 
-class DeviceDelete(DeleteView):
+class DeviceDelete(LoginRequiredMixin, DeleteView):
     model = Device
     success_url = '/devices/'
 
@@ -111,19 +111,21 @@ def signup(request):
 @login_required
 def start_chat(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
-
-    if request.user == receiver:
-        return redirect('profile_view', username=request.user.username)  # Prevent chatting with yourself
-
-    # Check if chat already exists between the two users, if not, create one
-    chat, created = Chat.objects.get_or_create(
-        sender=request.user, 
-        receiver=receiver
-    )
-
-    # Redirect to the chat room using the chat id
+    
+    if request.user.id == user_id:
+        return redirect('profile', username=request.user.username)
+        
+    existing_chat = Chat.objects.filter(
+        (models.Q(sender=request.user) & models.Q(receiver=receiver)) |
+        (models.Q(sender=receiver) & models.Q(receiver=request.user))
+    ).first()
+    
+    if existing_chat:
+        chat = existing_chat
+    else:
+        chat = Chat.objects.create(sender=request.user, receiver=receiver)
+        
     return redirect('chat-room', chat_id=chat.id)
-
 
 
 
@@ -145,22 +147,33 @@ def chat_room(request, chat_id):
 @login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
-
-    # Get the current logged-in user
-    current_user = request.user
-
-    # Retrieve chat rooms where the logged-in user is either sender or receiver
-    chats = Chat.objects.filter(Q(sender=current_user) | Q(receiver=current_user))
-
-    # Retrieve the devices owned by the current user
-    devices = Device.objects.filter(owner=current_user)
+    devices = Device.objects.filter(owner=user)
+    chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
+    
+    chat_details = []
+    processed_pairs = set()
+    
+    for chat in chats:
+        pair_id = tuple(sorted([chat.sender.id, chat.receiver.id]))
+        
+        if pair_id not in processed_pairs:
+            other_user = chat.receiver if chat.sender == user else chat.sender
+            
+            latest_chat = Chat.objects.filter(
+                (models.Q(sender=pair_id[0]) & models.Q(receiver=pair_id[1])) |
+                (models.Q(sender=pair_id[1]) & models.Q(receiver=pair_id[0]))
+            ).latest('date_time')
+            
+            chat_details.append({
+                'chat': latest_chat,
+                'other_user': other_user
+            })
+            processed_pairs.add(pair_id)
 
     context = {
-        'user': user,
-        'chats': chats,  # Pass chat history to the template
-        'devices': devices,  # Pass the list of owned devices to the template
+        'profile_user': user,
+        'devices': devices,
+        'chats': chat_details
     }
+    
     return render(request, 'user/profile.html', context)
-
-
-
