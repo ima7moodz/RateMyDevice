@@ -1,33 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ profile_user.username }}'s Activity</h1>
+<div class="container mt-4">
+    <h1 class="text-center">{{ profile_user.username }}'s Activity</h1>
 
-<h2>Devices Owned</h2>
-<ul>
-    {% for device in devices %}
-        <li><a href="{% url 'device-detail' device.id %}">{{ device.name }}</a> -{{ device.get_category_display }}</li>
-    {% empty %}
-        <li>No devices added.</li>
-    {% endfor %}
-</ul>
+    <h2 class="mt-4">Devices Owned</h2>
+    <div class="row">
+        {% for device in devices %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img src="{{ device.image.url }}" class="img-thumbnail" alt="{{ device.name }}"style="height: 180px; width: 100%; object-fit: contain;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ device.name }}</h5>
+                        <p class="card-text">Category: {{ device.get_category_display }}</p>
+                        <p class="card-text"><strong>Warranty Expiration Date:</strong> {{ device.warrenty_expration_Date }}</p>
+                        <a href="{% url 'device-detail' device.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    No devices added.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
-<h2>Chats</h2>
-<ul>
-    {% for sender_user, receiver_user in chats %}
-        <li>
-            <a href="{% url 'chat-room' sender_user.id %}">
-                Chat with 
-                {% if sender_user == profile_user %}
-                    {{ receiver_user.username }}
-                {% else %}
-                    {{ sender_user.username }}
-                {% endif %}
-            </a>
-        </li>
-    {% empty %}
-        <li>No chats yet.</li>
-    {% endfor %}
-</ul>
+    <h2 class="mt-4">Chats</h2>
+    <div class="row">
+        {% for chat_info in chats %}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm chat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Chat with {{ chat_info.other_user.username }}
+                        </h5>
+                        <a href="{% url 'chat-room' chat_info.chat.id %}" class="btn btn-secondary">Go to Chat</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No chats yet.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock %}
