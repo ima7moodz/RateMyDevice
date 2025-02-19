@@ -9,7 +9,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
+
 from django.db import models
+
 
 
 # Define the home view function
@@ -45,17 +47,16 @@ def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     reviews = device.reviews_set.all()
     review_form = ReviewForm()
-    print(device.category)
+
     context = {
         'device': device,
         'review_form': review_form,
-        'reviews': reviews
+        'reviews': reviews,
+        'owner_id': device.owner.id if device.owner else None  # Ensure owner_id is passed
     }
-    
-    if device.owner:  
-        context['owner_id'] = device.owner.id  
 
     return render(request, 'devices/detail.html', context)
+
 
 
 
@@ -112,6 +113,7 @@ def signup(request):
 @login_required
 def start_chat(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
+
     
     if request.user.id == user_id:
         return redirect('profile', username=request.user.username)
@@ -126,6 +128,7 @@ def start_chat(request, user_id):
     else:
         chat = Chat.objects.create(sender=request.user, receiver=receiver)
         
+
     return redirect('chat-room', chat_id=chat.id)
 
 
@@ -143,9 +146,12 @@ def chat_room(request, chat_id):
     return render(request, 'chats/chat_room.html', {'chat': chat, 'messages': messages})
 
 
+
+
 @login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
+
     devices = Device.objects.filter(owner=user)
     chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
     
@@ -176,3 +182,4 @@ def profile_view(request, username):
     }
     
     return render(request, 'user/profile.html', context)
+
