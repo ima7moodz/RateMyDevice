@@ -9,6 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
+from django.db.models import Q
+
 
 
 
@@ -44,17 +46,16 @@ def device_detail(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     reviews = device.reviews_set.all()
     review_form = ReviewForm()
-    print(device.category)
+
     context = {
         'device': device,
         'review_form': review_form,
-        'reviews': reviews
+        'reviews': reviews,
+        'owner_id': device.owner.id if device.owner else None  # Ensure owner_id is passed
     }
-    
-    if device.owner:  
-        context['owner_id'] = device.owner.id  
 
     return render(request, 'devices/detail.html', context)
+
 
 
 
@@ -110,12 +111,20 @@ def signup(request):
 @login_required
 def start_chat(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
-    senders = get_object_or_404(User, id=user_id)
-    if senders == receiver and receiver == senders:
-        print("error")
-    else:
-        chat, created = Chat.objects.get_or_create(sender=request.user, receiver=receiver)
+
+    if request.user == receiver:
+        return redirect('profile_view', username=request.user.username)  # Prevent chatting with yourself
+
+    # Check if chat already exists between the two users, if not, create one
+    chat, created = Chat.objects.get_or_create(
+        sender=request.user, 
+        receiver=receiver
+    )
+
+    # Redirect to the chat room using the chat id
     return redirect('chat-room', chat_id=chat.id)
+
+
 
 
 @login_required
@@ -131,27 +140,27 @@ def chat_room(request, chat_id):
     return render(request, 'chats/chat_room.html', {'chat': chat, 'messages': messages})
 
 
+
+
 @login_required
 def profile_view(request, username):
-    user = get_object_or_404(User, username=username) 
-    devices = Device.objects.filter(owner=user)
-    chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
-    unique_chats = []
-    for chat in chats:
-        chat_pair = tuple(sorted([chat.sender.id, chat.receiver.id]))  
-        if chat_pair not in unique_chats:
-            unique_chats.append(chat_pair)
-    chat_details = []
-    for chat_pair in unique_chats:
-        sender_user = User.objects.get(id=chat_pair[0])
-        receiver_user = User.objects.get(id=chat_pair[1])
-        chat_details.append((sender_user, receiver_user))
+    user = get_object_or_404(User, username=username)
+
+    # Get the current logged-in user
+    current_user = request.user
+
+    # Retrieve chat rooms where the logged-in user is either sender or receiver
+    chats = Chat.objects.filter(Q(sender=current_user) | Q(receiver=current_user))
+
+    # Retrieve the devices owned by the current user
+    devices = Device.objects.filter(owner=current_user)
 
     context = {
-        'profile_user': user,
-        'devices': devices,
-        'chats': chat_details  
+        'user': user,
+        'chats': chats,  # Pass chat history to the template
+        'devices': devices,  # Pass the list of owned devices to the template
     }
-    
     return render(request, 'user/profile.html', context)
+
+
 

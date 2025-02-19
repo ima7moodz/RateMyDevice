@@ -42,13 +42,15 @@ class Reviews(models.Model):
         ordering = ['-id']
 
 class Chat(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_chats")
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_chats")
-    date_time = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, related_name="sent_chats", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="received_chats", on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, null=True, blank=True, on_delete=models.CASCADE)  # Assuming a chat can be associated with a device
 
     def __str__(self):
         return f"Chat between {self.sender.username} and {self.receiver.username}"
-    
+
+    class Meta:
+        unique_together = ('sender', 'receiver') 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
