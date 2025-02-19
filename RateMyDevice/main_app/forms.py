@@ -30,4 +30,11 @@ class DeviceForm(forms.ModelForm):
     class Meta:
         model = Device
         fields = ['name', 'category', 'description', 'rate', 'warrenty_expration_Date', 'opinion', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control floating-input', 'placeholder': ' '}),
+            'description': forms.Textarea(attrs={'class': 'form-control floating-input', 'rows': 3, 'placeholder': ' '}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'opinion': forms.Textarea(attrs={'class': 'form-control floating-input', 'rows': 3, 'placeholder': ' '}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control file-input'}),
+        }
 
