@@ -9,8 +9,9 @@
         {% for device in devices %}
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
+
                     <img src="{{ device.image.url }}" class="img-thumbnail" alt="{{ device.name }}"style="height: 180px; width: 100%; object-fit: contain;">
-                    <div class="card-body">
+                  <div class="card-body">
                         <h5 class="card-title">{{ device.name }}</h5>
                         <p class="card-text">Category: {{ device.get_category_display }}</p>
                         <p class="card-text"><strong>Warranty Expiration Date:</strong> {{ device.warrenty_expration_Date }}</p>
