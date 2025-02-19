@@ -149,12 +149,13 @@ def profile_view(request, username):
     devices = Device.objects.filter(owner=user)
     chats = Chat.objects.filter(sender=user) | Chat.objects.filter(receiver=user)
     
-    chat_details = []
-    processed_pairs = set()
+    chat_details = []# Will store final chat information
+    processed_pairs = set()# Keeps track of which user pairs we've handled
     
     for chat in chats:
         pair_id = tuple(sorted([chat.sender.id, chat.receiver.id]))
         
+        # Only process this chat pair if we haven't seen it before
         if pair_id not in processed_pairs:
             other_user = chat.receiver if chat.sender == user else chat.sender
             

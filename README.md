@@ -1,7 +1,10 @@
 # RateMyDevice
 
 ## Screenshot/Logo
-
+![Home Page](image.png)
+![Detail Page](image-1.png)
+![Activity Page](image-2.png)
+![Private Chat-room](image-3.png)
 
 ## About RateMyDevice
 **RateMyDevice** is a web application built using Django that allows users to add new devices they have purchased and provide reviews. Users can rate their devices from 0 to 5 stars, write descriptions, and share their experiences with others. 
